@@ -61,6 +61,15 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		222F87462AF0FBD100815F26 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				EB2BE502239524DC00FB933B /* Assets.xcassets */,
+				EB2BE504239524DC00FB933B /* LaunchScreen.storyboard */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		EB2BE4ED239524DB00FB933B = {
 			isa = PBXGroup;
 			children = (
@@ -84,8 +93,7 @@
 				222F87432AF0FB4A00815F26 /* Data Model */,
 				222F87442AF0FB6800815F26 /* Controllers */,
 				222F87452AF0FB7B00815F26 /* Views */,
-				EB2BE502239524DC00FB933B /* Assets.xcassets */,
-				EB2BE504239524DC00FB933B /* LaunchScreen.storyboard */,
+				222F87462AF0FBD100815F26 /* Supporting Files */,
 				EB2BE507239524DC00FB933B /* Info.plist */,
 			);
 			path = Todoey;
