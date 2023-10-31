@@ -7,12 +7,13 @@
 //
 
 import UIKit
+import CoreData
 
 class TodoListViewController: UITableViewController {
 
     var items = [Item]()
     
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,7 +28,11 @@ class TodoListViewController: UITableViewController {
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             if let text = textField.text {
-                let newItem = Item()
+                if text.isEmpty {
+                    return
+                }
+                
+                let newItem = Item(context: self.context)
                 newItem.title = text
                 
                 self.items.append(newItem)
@@ -36,12 +41,15 @@ class TodoListViewController: UITableViewController {
             }
         }
         
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        
         alert.addTextField() { (alertTextField) in
             alertTextField.placeholder = "Create new item"
             textField = alertTextField
         }
         
         alert.addAction(action)
+        alert.addAction(cancelAction)
         
         present(alert, animated: true)
     }
@@ -65,6 +73,10 @@ class TodoListViewController: UITableViewController {
     
     //MARK: - TableViewDelegate Methods
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+//        context.delete(items[indexPath.row])
+//        items.remove(at: indexPath.row)
+        
         items[indexPath.row].done.toggle()
         
         saveItems()
@@ -74,26 +86,23 @@ class TodoListViewController: UITableViewController {
     
     //MARK: - Model Manupulation Methods
     func saveItems() {
-        let encoder = PropertyListEncoder()
         
         do {
-            let data = try encoder.encode(items)
-            try data.write(to: dataFilePath!)
+            try context.save()
         } catch {
-            print("Error encoding item array \(error.localizedDescription)")
+            print("Error saving context \(error)")
         }
         
         tableView.reloadData()
     }
     
     func loadItems() {
-        if let data = try? Data(contentsOf: dataFilePath!) {
-            let decoder = PropertyListDecoder()
-            do {
-                items = try decoder.decode([Item].self, from: data)
-            } catch {
-                print("Error decoding item array \(error.localizedDescription)")
-            }
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        
+        do {
+            items = try context.fetch(request)
+        } catch {
+            print("Error loading context \(error)")
         }
     }
 }
